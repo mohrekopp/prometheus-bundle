@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 use TweedeGolf\PrometheusClient\CollectorRegistry;
+use TweedeGolf\PrometheusClient\Storage\StorageAdapterInterface;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -65,8 +66,19 @@ class TweedeGolfPrometheusExtension extends Extension
             }
         }
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        /* Check if autowiring is possible */
+        if (method_exists($container, 'autowire')) {
+            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+            $loader->load('services.yml');
+        } else {
+            $container->setParameter(
+                'tweede_golf_prometheus.default_key_prefix',
+                StorageAdapterInterface::DEFAULT_KEY_PREFIX
+            );
+
+            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+            $loader->load('legacy_services.yml');
+        }
     }
 
     /**

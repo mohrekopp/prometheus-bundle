@@ -1,0 +1,10 @@
+services:
+    tweede_golf.prometheus.storage.apcu:
+        class: TweedeGolf\PrometheusClient\Storage\ApcuAdapter
+        arguments:
+            - "%tweede_golf_prometheus.default_key_prefix%"
+
+    tweede_golf.prometheus.storage.apc:
+        class: TweedeGolf\PrometheusClient\Storage\ApcAdapter
+        arguments:
+            - "%tweede_golf_prometheus.default_key_prefix%"
